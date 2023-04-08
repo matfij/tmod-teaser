@@ -25,8 +25,17 @@ namespace Teaser.Content.Events
         private int spawnTimer = spawnDelay;
         private List<int> EnemyTypes = new List<int> { NPCID.Zombie, NPCID.DemonEye, NPCID.Wraith };
 
+        public void SwitchMeteorShower() {
+            meteorShowerActive = !meteorShowerActive;
+            Main.NewText(meteorShowerActive ? "A meteor shower is incoming!" : "A meteor shower ended!", 175, 75, 255);
+        }
+
         public override void PostUpdateTime()
         {
+            if (meteorShowerActive && Main.player[Main.myPlayer].dead)
+            {
+                SwitchMeteorShower();
+            }
             if (meteorShowerActive)
             {
                 // WorldGen.PlaceTile(x, y, TileID.Meteorite);

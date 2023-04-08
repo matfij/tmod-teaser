@@ -41,8 +41,7 @@ namespace Teaser.Content.Items.Consumable
         {
             if (useDelay == 0)
             {
-                MonstersMeteors.Instance.meteorShowerActive = !MonstersMeteors.Instance.meteorShowerActive;
-                Main.NewText(MonstersMeteors.Instance.meteorShowerActive ? "A meteor shower is incoming!" : "A meteor shower ended!", 175, 75, 255);
+                MonstersMeteors.Instance.SwitchMeteorShower();
                 useDelay = 60;
             }
             return false;
