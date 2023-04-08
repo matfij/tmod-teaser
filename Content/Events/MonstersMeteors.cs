@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -31,7 +30,6 @@ namespace Teaser.Content.Events
                     int y = Main.rand.Next((int)(Main.worldSurface * 0.8f));
                     WorldGen.PlaceTile(x, y, TileID.Meteorite);
                 }
-
                 // Spawn enemies
                 int enemyCount = Main.rand.Next(3, 6); // Spawn between 3 and 6 enemies
                 for (int i = 0; i < enemyCount; i++)
