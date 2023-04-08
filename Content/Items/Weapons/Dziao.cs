@@ -18,10 +18,11 @@ namespace Teaser.Content.Items.Weapons
 			Item.autoReuse = true;
 			
 			Item.DamageType = DamageClass.Ranged;
-			Item.damage = 200;
+			Item.damage = 50;
 			Item.knockBack = 5f;
 			Item.noMelee = true;
 
+			// Item.shoot = ModContent.ProjectileType<Projectiles.IceShotProjectile>();
 			Item.shoot = ProjectileID.PurificationPowder;
 			Item.shootSpeed = 40f;
 			Item.useAmmo = AmmoID.None;
