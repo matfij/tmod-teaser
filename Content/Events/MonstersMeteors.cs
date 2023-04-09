@@ -87,8 +87,6 @@ namespace Teaser.Content.Events
             int type = EnemyTypes[Main.rand.Next(EnemyTypes.Count)];
             // NPC.SpawnOnPlayer(Main.myPlayer, type);
             NPC.NewNPC(null, x, y, type);
-            Main.NewText($"Spawned random enemy at {x}, {y}, type: {type}", 175, 75, 255);
-            Main.NewText($"My position at {Main.player[Main.myPlayer].position.X}, {Main.player[Main.myPlayer].position.Y}", 175, 75, 255);
         }
 
         private (int, int) GenerateSurfaceNearXY()
