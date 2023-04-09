@@ -24,6 +24,7 @@ namespace Teaser.Content.Events
         private const int spawnDelay = 240; // 240/60=4s
         private int spawnTimer = spawnDelay;
         private List<int> EnemyTypes = new List<int> { NPCID.Zombie, NPCID.DemonEye, NPCID.Wraith };
+        private bool rauzenSpawned = false;
 
         public void SwitchMeteorShower() {
             meteorShowerActive = !meteorShowerActive;
@@ -35,6 +36,11 @@ namespace Teaser.Content.Events
             if (meteorShowerActive && Main.player[Main.myPlayer].dead)
             {
                 SwitchMeteorShower();
+            }
+            if (!rauzenSpawned && spawnTimer == 0) {
+                rauzenSpawned = true;
+                var (x, y) = GenerateRandomXY();
+                NPC.SpawnBoss(x * 16, y * 16, ModContent.NPCType<Characters.Bosses.RauzenBoss>(), Main.myPlayer);
             }
             if (meteorShowerActive)
             {

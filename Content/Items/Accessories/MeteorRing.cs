@@ -39,6 +39,7 @@ namespace Teaser.Content.Items.Accessories
             player.buffImmune[BuffID.Burning] = true;
             player.buffImmune[BuffID.OnFire] = true;
             player.AddBuff(BuffID.Swiftness, System.Int32.MaxValue);
+            player.AddBuff(BuffID.Regeneration, System.Int32.MaxValue);
         }
     }
 }
