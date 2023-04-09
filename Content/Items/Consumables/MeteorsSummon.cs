@@ -3,7 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Teaser.Content.Events;
 
-namespace Teaser.Content.Items.Consumable
+namespace Teaser.Content.Items.Consumables
 {
     public class MeteorsSummon : ModItem
     {

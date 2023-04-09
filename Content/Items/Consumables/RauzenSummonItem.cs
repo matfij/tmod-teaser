@@ -5,7 +5,7 @@ using Terraria.GameContent.Creative;
 using Terraria.ModLoader;
 using Teaser.Content.Characters.Bosses;
 
-namespace Teaser.Content.Items.Consumable
+namespace Teaser.Content.Items.Consumables
 {
 	public class RauzenSummonItem : ModItem
 	{
