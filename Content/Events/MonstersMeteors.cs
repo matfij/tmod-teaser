@@ -24,7 +24,7 @@ namespace Teaser.Content.Events
         private const int spawnDelay = 240; // 240/60=4s
         private int spawnTimer = spawnDelay;
         private List<int> EnemyTypes = new List<int> { NPCID.Zombie, NPCID.DemonEye, NPCID.Wraith,
-                                                        ModContent.NPCType<Characters.Enemies.Scavenger>() };
+            ModContent.NPCType<Characters.Enemies.Scavenger>(), ModContent.NPCType<Characters.Enemies.Poop>() };
         private bool rauzenSpawned = false;
         private List<int> spawnedEnemyIDs = new List<int>();
 
