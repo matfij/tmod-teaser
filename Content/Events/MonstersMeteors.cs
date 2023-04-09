@@ -26,12 +26,14 @@ namespace Teaser.Content.Events
         private List<int> EnemyTypes = new List<int> { NPCID.Zombie, NPCID.DemonEye, NPCID.Wraith,
                                                         ModContent.NPCType<Characters.Enemies.Scavenger>() };
         private bool rauzenSpawned = false;
+        private List<int> spawnedEnemyIDs = new List<int>();
 
         public void SwitchMeteorShower() {
             meteorShowerActive = !meteorShowerActive;
             Main.NewText(meteorShowerActive ? "A meteor shower is incoming!" : "A meteor shower ended!", 175, 75, 255);
             if (!meteorShowerActive)
             {
+                KillSpawned();
                 rauzenSpawned = false;
             }
         }
@@ -78,7 +80,8 @@ namespace Teaser.Content.Events
             int x = Main.rand.Next(Main.maxTilesX);
             int y = Main.rand.Next(WorldSurfaceHeight);
             // multiplied by 16 to convert from tile coordinates to pixel coordinates
-            NPC.NewNPC(null, x * 16, y * 16, NPCID.MeteorHead);
+            int enemyID = NPC.NewNPC(null, x * 16, y * 16, NPCID.MeteorHead);
+            spawnedEnemyIDs.Add(enemyID);
         }
 
         private void SpawnRandomEnemy()
@@ -86,7 +89,19 @@ namespace Teaser.Content.Events
             var (x, y) = GenerateSurfaceNearXY();
             int type = EnemyTypes[Main.rand.Next(EnemyTypes.Count)];
             // NPC.SpawnOnPlayer(Main.myPlayer, type);
-            NPC.NewNPC(null, x, y, type);
+            int enemyID = NPC.NewNPC(null, x, y, type);
+            spawnedEnemyIDs.Add(enemyID);
+        }
+
+        private void KillSpawned() {
+            foreach (int enemyID in spawnedEnemyIDs)
+            {
+                if (Main.npc[enemyID].active)
+                {
+                    Main.npc[enemyID].life = 0;
+                    // Main.npc[enemyID].checkDead();
+                }
+            }
         }
 
         private (int, int) GenerateSurfaceNearXY()
