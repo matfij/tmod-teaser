@@ -37,6 +37,8 @@ namespace Teaser.Content.Items.Accessories
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.buffImmune[BuffID.Burning] = true;
+            player.buffImmune[BuffID.OnFire] = true;
+            player.AddBuff(BuffID.Swiftness, System.Int32.MaxValue);
         }
     }
 }

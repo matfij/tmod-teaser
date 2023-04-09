@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -19,27 +20,60 @@ namespace Teaser.Content.Events
             Instance = null;
         }
 
+        private int WorldSurfaceHeight = (int)(Main.worldSurface * 0.8f);
+        private const int spawnDelay = 240; // 240/60=4s
+        private int spawnTimer = spawnDelay;
+        private List<int> EnemyTypes = new List<int> { NPCID.Zombie, NPCID.DemonEye, NPCID.Wraith };
+
+        public void SwitchMeteorShower() {
+            meteorShowerActive = !meteorShowerActive;
+            Main.NewText(meteorShowerActive ? "A meteor shower is incoming!" : "A meteor shower ended!", 175, 75, 255);
+        }
+
         public override void PostUpdateTime()
         {
+            if (meteorShowerActive && Main.player[Main.myPlayer].dead)
+            {
+                SwitchMeteorShower();
+            }
             if (meteorShowerActive)
             {
-                // Spawn meteorites
-                for (int i = 0; i < 10; i++)
-                {
-                    int x = Main.rand.Next(Main.maxTilesX);
-                    int y = Main.rand.Next((int)(Main.worldSurface * 0.8f));
-                    WorldGen.PlaceTile(x, y, TileID.Meteorite);
-                }
+                // WorldGen.PlaceTile(x, y, TileID.Meteorite);
+
                 // Spawn enemies
-                int enemyCount = Main.rand.Next(3, 6); // Spawn between 3 and 6 enemies
-                for (int i = 0; i < enemyCount; i++)
+                if (spawnTimer <= 0)
                 {
-                    int x = Main.rand.Next(Main.maxTilesX);
-                    int y = Main.rand.Next((int)(Main.worldSurface * 0.8f));
-                    int type = Main.rand.Next(5); // Spawn a random enemy type
-                    NPC.NewNPC(null, x * 16, y * 16, type);
+                    SpawnRandomEnemy();
+                    spawnTimer = spawnDelay;
+                }
+                else
+                {
+                    SpawnMeteorHead();
+                    spawnTimer--;
                 }
             }
+        }
+
+        private void SpawnMeteorHead()
+        {
+            var (x, y) = GenerateRandomXY();
+            // multiplied by 16 to convert from tile coordinates to pixel coordinates
+            NPC.NewNPC(null, x * 16, y * 16, NPCID.MeteorHead);
+        }
+
+        private void SpawnRandomEnemy()
+        {
+            var (x, y) = GenerateRandomXY();
+            int type = EnemyTypes[Main.rand.Next(EnemyTypes.Count)];
+            NPC.SpawnOnPlayer(Main.myPlayer, type);
+            // NPC.NewNPC(null, x * 16, y * 16, type);
+        }
+
+        private (int, int) GenerateRandomXY()
+        {
+            int x = Main.rand.Next(Main.maxTilesX);
+            int y = Main.rand.Next(WorldSurfaceHeight);
+            return (x, y);
         }
     }
 }
