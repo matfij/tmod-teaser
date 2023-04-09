@@ -23,30 +23,36 @@ namespace Teaser.Content.Events
         private int WorldSurfaceHeight = (int)(Main.worldSurface * 0.8f);
         private const int spawnDelay = 240; // 240/60=4s
         private int spawnTimer = spawnDelay;
-        private List<int> EnemyTypes = new List<int> { NPCID.Zombie, NPCID.DemonEye, NPCID.Wraith };
+        private List<int> EnemyTypes = new List<int> { NPCID.Zombie, NPCID.DemonEye, NPCID.Wraith,
+                                                        ModContent.NPCType<Characters.Enemies.Scavenger>() };
         private bool rauzenSpawned = false;
 
         public void SwitchMeteorShower() {
             meteorShowerActive = !meteorShowerActive;
             Main.NewText(meteorShowerActive ? "A meteor shower is incoming!" : "A meteor shower ended!", 175, 75, 255);
+            if (!meteorShowerActive)
+            {
+                rauzenSpawned = false;
+            }
         }
 
-        public override void PostUpdateTime()
-        {
+        public override void PostUpdatePlayers() {
             if (meteorShowerActive && Main.player[Main.myPlayer].dead)
             {
                 SwitchMeteorShower();
             }
+        }
+
+        public override void PreUpdateTime()
+        {
             if (!rauzenSpawned && spawnTimer == 0) {
                 rauzenSpawned = true;
-                var (x, y) = GenerateRandomXY();
-                NPC.SpawnBoss(x * 16, y * 16, ModContent.NPCType<Characters.Bosses.RauzenBoss>(), Main.myPlayer);
+                var (x, y) = GenerateSurfaceNearXY();
+                NPC.SpawnBoss(x, y, ModContent.NPCType<Characters.Bosses.RauzenBoss>(), Main.myPlayer);
             }
             if (meteorShowerActive)
             {
                 // WorldGen.PlaceTile(x, y, TileID.Meteorite);
-
-                // Spawn enemies
                 if (spawnTimer <= 0)
                 {
                     SpawnRandomEnemy();
@@ -60,25 +66,37 @@ namespace Teaser.Content.Events
             }
         }
 
+        public override void PostUpdateTime() {
+            if (rauzenSpawned && NPC.AnyNPCs(ModContent.NPCType<Characters.Bosses.RauzenBoss>()) == false && meteorShowerActive)
+            {
+                SwitchMeteorShower();
+            }
+        }
+
         private void SpawnMeteorHead()
         {
-            var (x, y) = GenerateRandomXY();
+            int x = Main.rand.Next(Main.maxTilesX);
+            int y = Main.rand.Next(WorldSurfaceHeight);
             // multiplied by 16 to convert from tile coordinates to pixel coordinates
             NPC.NewNPC(null, x * 16, y * 16, NPCID.MeteorHead);
         }
 
         private void SpawnRandomEnemy()
         {
-            var (x, y) = GenerateRandomXY();
+            var (x, y) = GenerateSurfaceNearXY();
             int type = EnemyTypes[Main.rand.Next(EnemyTypes.Count)];
-            NPC.SpawnOnPlayer(Main.myPlayer, type);
-            // NPC.NewNPC(null, x * 16, y * 16, type);
+            // NPC.SpawnOnPlayer(Main.myPlayer, type);
+            NPC.NewNPC(null, x, y, type);
+            Main.NewText($"Spawned random enemy at {x}, {y}, type: {type}", 175, 75, 255);
+            Main.NewText($"My position at {Main.player[Main.myPlayer].position.X}, {Main.player[Main.myPlayer].position.Y}", 175, 75, 255);
         }
 
-        private (int, int) GenerateRandomXY()
+        private (int, int) GenerateSurfaceNearXY()
         {
-            int x = Main.rand.Next(Main.maxTilesX);
-            int y = Main.rand.Next(WorldSurfaceHeight);
+            int range = 800;
+            int playerX = (int)(Main.player[Main.myPlayer].position.X);
+            int x = Main.rand.Next(playerX - range, playerX + range);
+            int y = (int)(Main.player[Main.myPlayer].position.Y) - Main.rand.Next(range);
             return (x, y);
         }
     }
